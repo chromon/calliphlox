@@ -23,6 +23,7 @@ func init() {
 // reflect.Indirect() 获取指针指向的对象的反射值
 // (reflect.Type).Name() 返回类名(字符串)
 // (reflect.Type).Field(i) 获取第 i 个成员变量
+// Value.Kind() 返回 value 的类型
 func (m *mysql) DataTypeOf(typ reflect.Value) string {
 	switch typ.Kind() {
 	case reflect.Bool:
