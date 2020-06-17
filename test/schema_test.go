@@ -7,7 +7,8 @@ import (
 )
 
 type User struct {
-	Name string `orm:"PRIMARY KEY"`
+	Id int `orm:"PRIMARY KEY"`
+	Name string
 	Age  int
 }
 

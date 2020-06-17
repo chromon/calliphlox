@@ -1,7 +1,9 @@
 package session
 
 import (
+	"calliphlox/dialect"
 	"calliphlox/log"
+	"calliphlox/schema"
 	"database/sql"
 	"strings"
 )
@@ -16,12 +18,18 @@ type Session struct {
 
 	// sql 语句占位符
 	sqlVars []interface{}
+
+	dialect dialect.Dialect
+
+	// 数据库表对象
+	refTable *schema.Schema
 }
 
 // 由数据库连接创建 session 对象
-func New(db *sql.DB) *Session {
+func New(db *sql.DB, dialect dialect.Dialect) *Session {
 	return &Session{
 		db: db,
+		dialect: dialect,
 	}
 }
 

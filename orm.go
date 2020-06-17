@@ -1,6 +1,7 @@
 package orm
 
 import (
+	"calliphlox/dialect"
 	"calliphlox/log"
 	"calliphlox/session"
 	"database/sql"
@@ -10,8 +11,11 @@ import (
 // 负责与数据库交互前的准备工作（连接、测试数据库），和交互后的收尾工作（关闭连接）
 type Engine struct {
 	db *sql.DB
+
+	dialect dialect.Dialect
 }
 
+// 创建 Engine 实例时，获取 diver 对应的 dialect
 func NewEngine(driver, source string) (e *Engine, err error) {
 	// 连接数据库
 	db, err := sql.Open(driver, source)
@@ -26,8 +30,16 @@ func NewEngine(driver, source string) (e *Engine, err error) {
 		return
 	}
 
+	// 判断方言是否存在
+	dial, ok := dialect.GetDialect(driver)
+	if !ok {
+		log.Errorf("dialect %s Not Fount", driver)
+		return
+	}
+
 	e = &Engine{
 		db: db,
+		dialect: dial,
 	}
 	log.Info("Connect database success")
 	return
@@ -43,5 +55,5 @@ func (e *Engine) Close() {
 
 // 创建会话
 func (e *Engine) NewSession() *session.Session {
-	return session.New(e.db)
+	return session.New(e.db, e.dialect)
 }
