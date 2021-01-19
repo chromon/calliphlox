@@ -1,7 +1,6 @@
 package main
 
 import (
-	"calliphlox/dialect"
 	"calliphlox/schema"
 	"testing"
 )
@@ -12,7 +11,7 @@ type User struct {
 	Age  int
 }
 
-var TestDial, _ = dialect.GetDialect("mysql")
+//var TestDial, _ = dialect.GetDialect("mysql")
 
 func TestParse(t *testing.T) {
 	s := schema.Parse(&User{}, TestDial)

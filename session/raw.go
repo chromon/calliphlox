@@ -78,7 +78,7 @@ func (s *Session) QueryRow() *sql.Row {
 }
 
 // 从数据库中读取多行记录
-func (s *Session) QueryRows(rows *sql.Rows, err error) {
+func (s *Session) QueryRows() (rows *sql.Rows, err error) {
 	defer s.Clear()
 
 	log.Info(s.sql.String(), s.sqlVars)
