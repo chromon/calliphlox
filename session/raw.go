@@ -1,6 +1,7 @@
 package session
 
 import (
+	"calliphlox/clause"
 	"calliphlox/dialect"
 	"calliphlox/log"
 	"calliphlox/schema"
@@ -19,10 +20,14 @@ type Session struct {
 	// sql 语句占位符
 	sqlVars []interface{}
 
+	// 方言
 	dialect dialect.Dialect
 
 	// 数据库表对象
 	refTable *schema.Schema
+
+	// 子句
+	clause clause.Clause
 }
 
 // 由数据库连接创建 session 对象
@@ -37,6 +42,7 @@ func New(db *sql.DB, dialect dialect.Dialect) *Session {
 func (s *Session) Clear() {
 	s.sql.Reset()
 	s.sqlVars = nil
+	s.clause = clause.Clause{}
 }
 
 // 获取数据库连接

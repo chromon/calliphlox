@@ -48,6 +48,7 @@ func Parse(dest interface{}, dialect dialect.Dialect) *Schema {
 	// 通过反射获取对象类型
 	// ValueOf() 返回传入参数的值
 	// TypeOf() 返回传入参数的类型
+	// Indirect() 获取指针指向的实例
 	modelType := reflect.Indirect(reflect.ValueOf(dest)).Type()
 
 	// 构造数据库表 Schema 对象
@@ -87,4 +88,14 @@ func Parse(dest interface{}, dialect dialect.Dialect) *Schema {
 		}
 	}
 	return schema
+}
+
+// 将对象中的属性值，根据数据库中的列顺序返回
+func (schema *Schema) RecordValues(dest interface{}) []interface{} {
+	destValue := reflect.Indirect(reflect.ValueOf(dest))
+	var fieldValues []interface{}
+	for _, field := range schema.Fields {
+		fieldValues = append(fieldValues, destValue.FieldByName(field.Name).Interface())
+	}
+	return fieldValues
 }
