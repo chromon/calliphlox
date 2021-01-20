@@ -1,6 +1,6 @@
 # Calliphlox
 
-Calliphlox is a simple and powerful ORM for Go.
+Calliphlox is a simple ORM for Go.
 
 ## Features
 
