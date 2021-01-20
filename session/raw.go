@@ -14,6 +14,9 @@ type Session struct {
 	// 数据库连接
 	db *sql.DB
 
+	// 事务
+	tx *sql.Tx
+
 	// sql 语句
 	sql strings.Builder
 
@@ -29,6 +32,16 @@ type Session struct {
 	// 子句
 	clause clause.Clause
 }
+
+type CommonDB interface {
+	Query(query string, args ...interface{}) (*sql.Rows, error)
+	QueryRow(query string, args ...interface{}) *sql.Row
+	Exec(query string, args ...interface{}) (sql.Result, error)
+}
+
+// 验证是否实现了 CommonDB 接口
+var _ CommonDB = (*sql.DB)(nil)
+var _ CommonDB = (*sql.Tx)(nil)
 
 // 由数据库连接创建 session 对象
 func New(db *sql.DB, dialect dialect.Dialect) *Session {
@@ -46,7 +59,12 @@ func (s *Session) Clear() {
 }
 
 // 获取数据库连接
-func (s *Session) DB() *sql.DB {
+func (s *Session) DB() CommonDB {
+	// 当 tx 不为空时，则使用 tx 执行 SQL 语句，否则使用 db 执行 SQL 语句
+	if s.tx != nil {
+		return s.tx
+	}
+
 	return s.db
 }
 

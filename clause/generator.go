@@ -21,6 +21,9 @@ func init() {
 	generators[LIMIT] = _limit
 	generators[WHERE] = _where
 	generators[ORDERBY] = _orderBy
+	generators[UPDATE] = _update
+	generators[DELETE] = _delete
+	generators[COUNT] = _count
 }
 
 // 根据变量个数生成同等数量占位符
@@ -89,4 +92,29 @@ func _where(values ...interface{}) (string, []interface{}) {
 // orderBy 子句
 func _orderBy(values ...interface{}) (string, []interface{}) {
 	return fmt.Sprintf("ORDER BY %s", values[0]), []interface{}{}
+}
+
+// update 子句
+func _update(values ...interface{}) (string, []interface{}) {
+	tableName := values[0]
+	// map 类型，表示待更新的键值对
+	m := values[1].(map[string]interface{})
+	var keys []string
+	var vars []interface{}
+	for k, v := range m {
+		keys = append(keys, k + " = ?")
+		vars = append(vars, v)
+	}
+
+	return fmt.Sprintf("UPDATE %s SET %s", tableName, strings.Join(keys, ", ")), vars
+}
+
+// delete 子句
+func _delete(values ...interface{}) (string, []interface{}) {
+	return fmt.Sprintf("DELETE FROM %s", values[0]), []interface{}{}
+}
+
+// count 子句
+func _count(values ...interface{}) (string, []interface{}) {
+	return _select(values[0], []string{"count(*)"})
 }
